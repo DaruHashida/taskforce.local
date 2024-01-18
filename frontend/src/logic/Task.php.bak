@@ -1,0 +1,69 @@
+<?php
+namespace taskforce\logic;
+
+class TaskMaker
+
+{
+const STATUS_NEW = 'new';
+const STATUS_CANCELLED = 'cancelled';
+const STATUS_PROCESSING = 'processing';
+const STATUS_DONE = 'done';
+const STATUS_FAILED = 'failed';
+
+const ACTION_CANCEL = 'act_cancel';
+const ACTION_REACT = 'act_react';
+const ACTION_FINISH = 'act_finish';
+const ACTION_DENY = 'act_deny';
+
+public $possible_actions = [];
+public $status = '';
+public $task_header = '';
+public $task_text = '';
+protected $host_id = null;
+protected $performer_id = null;
+
+public static object_counter = 0;
+
+function __construct (int $host_id, string $task_header, string $task_text, int $performer_id)
+{	$this->task_id = ++self::counter;
+	$this->host_id = $host_id;
+	$this->performer_id = $performer_id; 
+	$this->task_header = $task_header;
+	$this->task_text = $task_text;
+	$this->status = STATUS_NEW;
+$this->possible_actions = self::possibleActionsMap($this->status); 
+}
+
+protected static function possibleActionsMap($status)
+{$possible_actions = ['host'=>NULL, 'performer' => NULL];
+$performer_actions = [
+	STATUS_NEW => ACTION_REACT,
+	STATUS_CANCELLED => NULL,
+	STATUS_PROCESSING => ACTION_DENY,
+	STATUS_DONE => NULL,
+	STATUS_FAILED => NULL
+	];
+$host_actions = [
+	STATUS_NEW =>ACTION_CANCEL,
+	STATUS_CANCELLED => NULL,
+	STATUS_PROCESSING => ACTION_FINISH,
+	STATUS_DONE => NULL,
+	STATUS_FAILED => NULL
+	];
+	$possible_acrions['host'] = $host_actions[$status];
+	$possible_actions['performer'] = $performer_actions[$status];
+	return $possible_actions;
+}
+
+protected static function getStatusAfterAction ($action)
+{
+$status_map = [
+ACTION_REACT => STATUS_PROCESSING,
+ACTION_CANCEL => STATUS_CANCELLED,
+ACTION_FINISH => STATUS_DONE,
+ACTION_DENY => STATUS_FAILED
+];
+return ($status_map[$action])
+}
+}
+
