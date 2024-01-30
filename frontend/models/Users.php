@@ -11,7 +11,7 @@ use yii\web\UploadedFile;
  * Class Users
  * @package frontend\models
  */
-class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterface
+class Users extends BaseUser implements yii\web\IdentityInterface
 {
     public $password_repeat;
     public $old_password;
@@ -85,7 +85,8 @@ class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterfa
      * @return mixed
      */
     public static function findByUserEmail(string $user_email)
-    {   return self::findOne(['user_email' => $user_email]);
+    {
+        return self::findOne(['user_email' => $user_email]);
     }
     /**
      * @return array
@@ -102,18 +103,18 @@ class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterfa
             [['user_name','user_email','user_city','password','password_repeat'],'required'/*,'on'=>self::SCENARIO_DEFAULT*/],
             ['user_email','email'],
             ['user_email','unique'/*,'on'=>self::SCENARIO_DEFAULT*/],
-            ['phonenumber','match','pattern'=>'/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/',
-                'message'=>'Номер телефона должен состоять из 11 цифр'],
-            ['password','match','pattern'=>'/(?=.*[0-9])(?=.*[!@#$%^&*.])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*.]{6,}/',
-                'message'=>'Пароль должен состоять не менее чем из 6-ти символов, содержать заглавную букву, знак препинания и цифру. 
+            ['phonenumber', 'match', 'pattern' => '/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/',
+                'message' => 'Номер телефона должен состоять из 11 цифр'],
+            ['password', 'match', 'pattern' => '/(?=.*[0-9])(?=.*[!@#$%^&*.])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*.]{6,}/',
+                'message' => 'Пароль должен состоять не менее чем из 6-ти символов, содержать заглавную букву, знак препинания и цифру. 
                 Мы хотим, чтобы Вы были в безопасности:)'],
             ['password','compare',/*,'on'=>self::SCENARIO_DEFAULT*/],
-            ['role','default','value'=>0],
+            ['role', 'default', 'value' => 0],
             ['done_tasks','integer']
 
         ];
     }
-    
+
     /**
      * @param $id
      * @return Users|null
@@ -124,19 +125,21 @@ class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterfa
     }
     public function getUserByName($name)
     {
-        return self::findOne(['user_name'=>$name]);
+        return self::findOne(['user_name' => $name]);
     }
 
     /**
      * @return int
      */
     public function getAge()
-    {   if ($this->birth_date)
-        {$secs_in_year = 31536000;
-        $birthday = strtotime($this->birth_date);
-        $now_time = time();
-        $diff = $now_time-$birthday;
-        return intdiv($diff,$secs_in_year);}
+    {
+        if ($this->birth_date) {
+            $secs_in_year = 31536000;
+            $birthday = strtotime($this->birth_date);
+            $now_time = time();
+            $diff = $now_time - $birthday;
+            return intdiv($diff, $secs_in_year);
+        }
     }
 
     /**
@@ -144,11 +147,11 @@ class Users extends \frontend\models\BaseUser implements yii\web\IdentityInterfa
      */
     public function getDate()
     {
-        $date=date_create($this->user_registration_date);
-        return date_format($date,"Y F d");
+        $date = date_create($this->user_registration_date);
+        return date_format($date, "Y F d");
     }
 
-    public function validatePassword ($password)
+    public function validatePassword($password)
     {
         return Yii::$app->security->validatePassword($password, $this->password);
     }

@@ -1,31 +1,32 @@
 <?php
-	namespace src\logic;
 
-	class CancelAction extends Action
+    namespace src\logic;
+
+class CancelAction extends Action
+{
+    public function getName(): string
     {
-        public function getName(): string
-        {
-            return ('Отменить');
-        }
+        return ('Отменить');
+    }
 
-        protected function getInnerName(): string
-        {
-            return ('act_cancel');
-        }
+    protected function getInnerName(): string
+    {
+        return ('act_cancel');
+    }
 
-        static function getUserProperties(int $user_id, object $obj): bool
-        {
-            return ($obj->task_host == $user_id);
-        }
+    static function getUserProperties(int $user_id, object $obj): bool
+    {
+        return ($obj->task_host == $user_id);
+    }
 
-        public function getButton(): string
-        {
-            return ('<a href="#" class="button button--orange action-btn" data-action="cancel">Отменить задание</a>');
-        }
+    public function getButton(): string
+    {
+        return ('<a href="#" class="button button--orange action-btn" data-action="cancel">Отменить задание</a>');
+    }
 
-        public function getForm($task_id): string
-        {
-            return("<section class=\"pop-up pop-up--cancel pop-up--close\">
+    public function getForm($task_id): string
+    {
+        return("<section class=\"pop-up pop-up--cancel pop-up--close\">
     <div class=\"pop-up--wrapper\">
         <h4>Отмена задания</h4>
         <p class=\"pop-up-text\">
@@ -38,5 +39,5 @@
         </div>
     </div>
 </section>");
-        }
     }
+}

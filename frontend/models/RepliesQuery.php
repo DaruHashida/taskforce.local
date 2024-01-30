@@ -2,12 +2,14 @@
 
 namespace frontend\models;
 
+use yii\db\ActiveQuery;
+
 /**
  * This is the ActiveQuery class for [[Replies]].
  *
  * @see Replies
  */
-class RepliesQuery extends \yii\db\ActiveQuery
+class RepliesQuery extends ActiveQuery
 {
     /*public function active()
     {

@@ -1,7 +1,7 @@
 <?php
 
-
 namespace frontend\controllers;
+
 use Yii;
 use frontend\models\Replies;
 use frontend\models\Tasks;
@@ -23,31 +23,31 @@ class RepliesController extends SecuredController
             $user->failed_tasks += 1;
             $user->save(false);
         }
-        $this->redirect(['/tasks/'.$id]);
+        $this->redirect(['/tasks/' . $id]);
     }
-    public function actionResponse ()
-    {   $reply = Replies::getInstance();
+    public function actionResponse()
+    {
+        $reply = Replies::getInstance();
 
-            if (\Yii::$app->request->getIsPost())
-            {
-                $reply->load(\Yii::$app->request->post());
+        if (\Yii::$app->request->getIsPost()) {
+            $reply->load(\Yii::$app->request->post());
 
-                if (Yii::$app->request->isAjax) {
-                    Yii::$app->response->format = Response::FORMAT_JSON;
-                    return ActiveForm::validate($reply);
-                }
-
-                if ($reply->validate()) {
-                    $reply->save();
-                    return $this->redirect(['tasks/view', 'id' => $reply->task_id]);
-                }
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($reply);
             }
 
+            if ($reply->validate()) {
+                $reply->save();
+                return $this->redirect(['tasks/view', 'id' => $reply->task_id]);
+            }
+        }
     }
 
     public function actionAccept($id)
-    {   $reply=Replies::findOne($id);
-        $task=Tasks::findOne($reply->task_id);
+    {
+        $reply = Replies::findOne($id);
+        $task = Tasks::findOne($reply->task_id);
         $reply->is_approved = 1;
         $task->task_status = 'STATUS_PROCESSING';
         $task->task_performer = $reply->user_id;
@@ -57,14 +57,15 @@ class RepliesController extends SecuredController
     }
 
     public function actionDecline($id)
-    {   $reply=Replies::findOne($id);
+    {
+        $reply = Replies::findOne($id);
         $reply->is_approved = -1;
         $reply->save(false);
     }
 
     public function actionCancel($id)
     {
-        $reply=Replies::findOne($id);
+        $reply = Replies::findOne($id);
         $task_id = $reply->task_id;
         $reply->delete();
         return $this->redirect(['tasks/view', 'id' => $task_id]);
@@ -83,7 +84,7 @@ class RepliesController extends SecuredController
             $opinion->load(Yii::$app->request->post());
             if ($opinion->validate()) {
                 $task->task_status = 'STATUS_DONE';
-                $user->done_tasks+=1;
+                $user->done_tasks += 1;
                 $task->save(false);
                 $user->save(false);
                 $opinion->save();

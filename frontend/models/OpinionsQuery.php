@@ -2,12 +2,14 @@
 
 namespace frontend\models;
 
+use yii\db\ActiveQuery;
+
 /**
  * This is the ActiveQuery class for [[Opinions]].
  *
  * @see Opinions
  */
-class OpinionsQuery extends \yii\db\ActiveQuery
+class OpinionsQuery extends ActiveQuery
 {
     /*public function active()
     {

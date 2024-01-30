@@ -28,7 +28,6 @@ use yii\authclient\AuthAction;
  */
 class SiteController extends Controller
 {
-
     /**
      * {@inheritdoc}
      */
@@ -44,7 +43,7 @@ class SiteController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'roles'=>['?'],
+                        'roles' => ['?'],
 /*                        'denyCallback' => function ($rule, $action) {
                             return $this->goHome();
                         }*/
@@ -67,7 +66,7 @@ class SiteController extends Controller
                 'class' => \yii\captcha\CaptchaAction::class,
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
-            'vk'=>
+            'vk' =>
                 [
                     'class' => 'yii\authclient\AuthAction',
                     'successCallback' => [$this, 'onAuthSuccess'],
@@ -82,18 +81,17 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        if (Yii::$app->user->isGuest)
-            {$this->layout = 'landing';
+        if (Yii::$app->user->isGuest) {
+            $this->layout = 'landing';
             $login_form = new LoginForm();
-            return $this->render('index',['model'=>$login_form]);
-            }
+            return $this->render('index', ['model' => $login_form]);
+        }
         /*$this->layout = 'main';
         return $this->render('hello');*/
         $this->layout = 'main';
         $user = Yii::$app->getUser()->getIdentity();
        /* return $this->redirect(['users/view/'.$user->user_id]);*/
         return $this->redirect(['tasks/index']);
-
     }
 
     /**
@@ -104,11 +102,10 @@ class SiteController extends Controller
     public function actionLogin()
     {
         $login_form = new LoginForm();
-        if (Yii::$app->request->getIsPost())
-        { $login_form->load(Yii::$app->request->post());
-            if (Yii::$app->request->isAjax)
-            {
-                Yii::$app->response->format=Response::FORMAT_JSON;
+        if (Yii::$app->request->getIsPost()) {
+            $login_form->load(Yii::$app->request->post());
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
                 return ActiveForm::validate($login_form);
             }
 
@@ -277,5 +274,4 @@ class SiteController extends Controller
 
 
     //LOGIC FOR VK!!!!
-
 }

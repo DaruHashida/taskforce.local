@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use Yii;
 use frontend\models\Users;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "auth".
@@ -12,7 +13,7 @@ use frontend\models\Users;
  * @property int|null $source_id
  * @property int|null $name_of_API
  */
-class Auth extends \yii\db\ActiveRecord
+class Auth extends ActiveRecord
 {
     /**
      * {@inheritdoc}

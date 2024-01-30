@@ -1,29 +1,33 @@
 <?php
-	namespace src\logic;
-	use Yii;
-	class DenyAction extends Action
-	{ 
-	public function getName() : string
-		{ 
-		return ('Провалено');
-			}
-	protected function getInnerName () : string
-	{
-		return('act_deny');
-	}
-	static function getUserProperties (int $user_id, object $obj):bool
-	{
-	return ($obj->task_performer == $user_id);
-	}
 
-	public function getButton () : string
+    namespace src\logic;
+
+    use Yii;
+
+class DenyAction extends Action
+{
+    public function getName(): string
+    {
+        return ('Провалено');
+    }
+    protected function getInnerName(): string
+    {
+        return('act_deny');
+    }
+    static function getUserProperties(int $user_id, object $obj): bool
+    {
+        return ($obj->task_performer == $user_id);
+    }
+
+    public function getButton(): string
     {
         return ('<a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
         ');
     }
 
     public function getForm($task_id): string
-    { $base_url = Yii::$app->request->baseUrl;
+    {
+        $base_url = Yii::$app->request->baseUrl;
         return ("<section class=\"pop-up pop-up--refusal pop-up--close\">
     <div class=\"pop-up--wrapper\">
         <h4>Отказ от задания</h4>
@@ -39,4 +43,4 @@
     </div>
 </section>");
     }
-	}
+}

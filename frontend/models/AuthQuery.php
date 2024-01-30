@@ -2,12 +2,14 @@
 
 namespace frontend\models;
 
+use yii\db\ActiveQuery;
+
 /**
  * This is the ActiveQuery class for [[Auth]].
  *
  * @see Auth
  */
-class AuthQuery extends \yii\db\ActiveQuery
+class AuthQuery extends ActiveQuery
 {
     /*public function active()
     {

@@ -1,7 +1,7 @@
 <?php
 
-
 namespace frontend\models;
+
 use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
@@ -45,5 +45,4 @@ class BaseUser extends ActiveRecord implements IdentityInterface
     {
         return true;
     }
-
 }

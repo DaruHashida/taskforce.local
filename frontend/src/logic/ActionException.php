@@ -1,7 +1,7 @@
 <?php
 
-
 namespace src;
+
 use Exception;
 
 /**
@@ -13,7 +13,7 @@ class ActionException extends Exception
     public function __toString()
     {
         $msg = $this->getMessage();
-        $error = "Unknown action: ".$msg;
+        $error = "Unknown action: " . $msg;
         error_log($error);
     }
 }

@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "cities".
@@ -11,7 +12,7 @@ use Yii;
  * @property float|null $lat
  * @property float|null $long
  */
-class Cities extends \yii\db\ActiveRecord
+class Cities extends ActiveRecord
 {
     /**
      * {@inheritdoc}

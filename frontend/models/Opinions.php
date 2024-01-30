@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "opinions".
@@ -13,8 +14,9 @@ use Yii;
  * @property int $user_id
  * @property int $responsor_id
  */
-class Opinions extends \yii\db\ActiveRecord
-{   protected static $_instance;
+class Opinions extends ActiveRecord
+{
+    protected static $_instance;
     /**
      * {@inheritdoc}
      */
@@ -62,9 +64,8 @@ class Opinions extends \yii\db\ActiveRecord
      */
     public static function getInstance()
     {
-        if (self::$_instance === null)
-        {
-            return new self;
+        if (self::$_instance === null) {
+            return new self();
         }
         return self::$_instance;
     }

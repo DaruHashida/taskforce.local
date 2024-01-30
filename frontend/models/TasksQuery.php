@@ -2,12 +2,14 @@
 
 namespace frontend\models;
 
+use yii\db\ActiveQuery;
+
 /**
  * This is the ActiveQuery class for [[Tasks]].
  *
  * @see Tasks
  */
-class TasksQuery extends \yii\db\ActiveQuery
+class TasksQuery extends ActiveQuery
 {
     /*public function active()
     {
@@ -35,23 +37,20 @@ class TasksQuery extends \yii\db\ActiveQuery
     public function getSearchQuery()
     {
         $query = self::find();
-        $query->where(['status_id'=> 'new']);
+        $query->where(['status_id' => 'new']);
 
-        $query->andFilterWhere(['task_category'=>$this->task_category]);
+        $query->andFilterWhere(['task_category' => $this->task_category]);
 
         if ($this->noLocation) {
             $query->andWhere('task_location IS NULL');
         }
 
-        if ($this->noResponses)
-        {
+        if ($this->noResponses) {
             $query->joinWith('replies r')->andWhere('r.id IS NULL');
         }
-        if ($this->filterPeriod)
-        {
-            $query->andWhere('UNIX_TIMESTAMP(tasks.task_creation_date > UNIX_TIMESTAMP()-:period', [':period'=>$this->filterPeriod]);
+        if ($this->filterPeriod) {
+            $query->andWhere('UNIX_TIMESTAMP(tasks.task_creation_date > UNIX_TIMESTAMP()-:period', [':period' => $this->filterPeriod]);
         }
         return $query->orderBy('task_creation_date DESC');
     }
-    
 }

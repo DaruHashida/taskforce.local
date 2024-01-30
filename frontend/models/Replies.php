@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "replies".
@@ -15,8 +16,9 @@ use Yii;
  * @property int|null $is_approved
  * @property int|null $price
  */
-class Replies extends \yii\db\ActiveRecord
-{   protected static $_instance;
+class Replies extends ActiveRecord
+{
+    protected static $_instance;
     /**
      * {@inheritdoc}
      */
@@ -65,9 +67,8 @@ class Replies extends \yii\db\ActiveRecord
 
     public static function getInstance()
     {
-        if (self::$_instance === null)
-        {
-            return new self;
+        if (self::$_instance === null) {
+            return new self();
         }
         return self::$_instance;
     }

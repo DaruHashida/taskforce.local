@@ -11,6 +11,8 @@ use src\logic\ReactAction;
 use src\logic\FinishAction;
 use src\logic\DenyAction;
 use app\helpers\YandexMapHelper;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use DateTime;
 
@@ -30,7 +32,7 @@ use DateTime;
  * @property float $task_price
  * @property string|null $task_category
  */
-class Tasks extends \yii\db\ActiveRecord
+class Tasks extends ActiveRecord
 {
     public $noResponses;
     public $noLocation;
@@ -58,14 +60,14 @@ class Tasks extends \yii\db\ActiveRecord
             [['task_title', 'task_host', 'task_performer', 'task_expire_date', 'task_actions', 'task_coordinates', 'task_category'], 'string'],
             [['task_description'], 'string', 'max' => 1000],
             ['task_expire_date', 'default', 'value' => null],
-            ['task_creation_date','default','value'=>date("Y-m-d H:i:s")],
-            ['task_status','default','value'=>"STATUS_NEW"],
+            ['task_creation_date', 'default', 'value' => date("Y-m-d H:i:s")],
+            ['task_status', 'default', 'value' => "STATUS_NEW"],
             ['task_expire_date', 'valiDate'],
             ['loc_validation', 'validateL'],
-            ['loc_validation','default','value'=>'Адрес не определен!'],
+            ['loc_validation', 'default', 'value' => 'Адрес не определен!'],
             [['attach_file'],'file'],
-            [['attach_file'],'file', 'maxSize' => 1024*1024*100, 'skipOnEmpty' => true, 'message'=>'Ваш файл-описание задания не должен быть больше 100 Мб'],
-            [['attach_file'],'file', 'extensions'=>'jpg, jpeg, png, pdf, docx, txt, doc','message'=>'Ваш фай должен иметь либо формат jpg, либо jpeg, либо png, либо pdf, либо docx, либо doc, либо txt!'],
+            [['attach_file'], 'file', 'maxSize' => 1024 * 1024 * 100, 'skipOnEmpty' => true, 'message' => 'Ваш файл-описание задания не должен быть больше 100 Мб'],
+            [['attach_file'], 'file', 'extensions' => 'jpg, jpeg, png, pdf, docx, txt, doc', 'message' => 'Ваш фай должен иметь либо формат jpg, либо jpeg, либо png, либо pdf, либо docx, либо doc, либо txt!'],
             [['noResponses', 'noLocation'], 'boolean'],
             [['filterPeriod'], 'number'],
         ];
@@ -89,9 +91,9 @@ class Tasks extends \yii\db\ActiveRecord
             'task_coordinates' => 'Местоположение',
             'task_price' => 'Цена',
             'task_category' => 'Категория',
-            'task_city'=>'Город, где требуется исполнить задание',
-            'noResponses'=>'Без откликов',
-            'noLocation'=>'Без адреса'
+            'task_city' => 'Город, где требуется исполнить задание',
+            'noResponses' => 'Без откликов',
+            'noLocation' => 'Без адреса'
         ];
     }
     public function getFile()
@@ -102,7 +104,7 @@ class Tasks extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Reply]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
 //    public function getReplies()
 //    {
@@ -113,7 +115,7 @@ class Tasks extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Category]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getCategory()
     {
@@ -123,7 +125,7 @@ class Tasks extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Status]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
 
     public function getStatus()
@@ -141,7 +143,7 @@ class Tasks extends \yii\db\ActiveRecord
 
     public function getOwner()
     {
-        return Users::find()->where(['id'=>$this->task_host])->one();
+        return Users::find()->where(['id' => $this->task_host])->one();
     }
 
     /**
@@ -149,33 +151,31 @@ class Tasks extends \yii\db\ActiveRecord
      */
     public function getPerformer()
     {
-        return Users::find()->where(['id'=>$this->task_performer])->one();
+        return Users::find()->where(['id' => $this->task_performer])->one();
     }
     /**
      * @return mixed
      */
     public function getReplies()
     {
-        return $this->hasMany(Replies::className(), ['task_id'=>'id']);
+        return $this->hasMany(Replies::className(), ['task_id' => 'id']);
     }
 
     public function getSearchQuery()
     {
         $query = self::find();
 
-        $query->andFilterWhere(['task_category'=>$this->task_category]);
+        $query->andFilterWhere(['task_category' => $this->task_category]);
 
         if ($this->noLocation) {
             $query->andWhere('task_coordinates IS NULL');
         }
 
-        if ($this->noResponses)
-        {
+        if ($this->noResponses) {
             $query->joinWith('replies r')->andWhere('r.id IS NULL');
         }
-        if ($this->filterPeriod)
-        {
-            $query->andWhere('UNIX_TIMESTAMP(tasks.task_creation_date) > UNIX_TIMESTAMP()-:period', [':period'=>$this->filterPeriod]);
+        if ($this->filterPeriod) {
+            $query->andWhere('UNIX_TIMESTAMP(tasks.task_creation_date) > UNIX_TIMESTAMP()-:period', [':period' => $this->filterPeriod]);
         }
         return $query->orderBy('task_creation_date DESC');
     }
@@ -190,26 +190,25 @@ class Tasks extends \yii\db\ActiveRecord
     /**
      *
      */
-    public function possibleAction (int $user_id, ?string $status)
-    {   $possible=[];
-        if (!isset($status)||!$status)
-        {
-        $status = 'STATUS_NEW';
+    public function possibleAction(int $user_id, ?string $status)
+    {
+        $possible = [];
+        if (!isset($status) || !$status) {
+            $status = 'STATUS_NEW';
         }
         $actions_map = [
             'STATUS_NEW' => [ReactAction::class, CancelAction::class],
             'STATUS_PROCESSING' => [DenyAction::class, FinishAction::class],
-            'STATUS_FAILED'=>[],
-            'STATUS_DONE'=>[]
+            'STATUS_FAILED' => [],
+            'STATUS_DONE' => []
         ];
 
         $possible_actions = $actions_map[$status];
 
-        foreach ($possible_actions as $action)
-        { if ($action::getUserProperties($user_id,$this))
-        {
-            array_push($possible, new $action($this->task_host, $this->task_performer));
-        }
+        foreach ($possible_actions as $action) {
+            if ($action::getUserProperties($user_id, $this)) {
+                array_push($possible, new $action($this->task_host, $this->task_performer));
+            }
         }
         return $possible;
     }
@@ -217,27 +216,26 @@ class Tasks extends \yii\db\ActiveRecord
  *
  */
     public function getRussianStatusName()
-
-    { $status_map = [
+    {
+        $status_map = [
         'STATUS_NEW' => 'Новое',
         'STATUS_PROCESSING' => 'Выполняется',
-        'STATUS_FAILED'=> 'Отказ исполнителя',
-        'STATUS_DONE'=> 'Выполнено'
-    ];
+            'STATUS_FAILED' => 'Отказ исполнителя',
+            'STATUS_DONE' => 'Выполнено'
+        ];
         return ($status_map[$this->task_status]);
     }
 /*
  *
  */
-    public function validateL ($attribute)
+    public function validateL($attribute)
     {
-        if ($this->task_coordinates && $this->loc_validation)
-        {
+        if ($this->task_coordinates && $this->loc_validation) {
             $this->addError($attribute, $this->loc_validation);
         }
     }
 
-    public function valiDate($attributes = null, $clearErrors=true)
+    public function valiDate($attributes = null, $clearErrors = true)
     {
         $d = DateTime::createFromFormat('Y-m-d', $this->task_expire_date);
 
@@ -247,27 +245,25 @@ class Tasks extends \yii\db\ActiveRecord
      *
      */
     public function upload()
-    {   $user = Yii::$app->getUser()->getIdentity();
+    {
+        $user = Yii::$app->getUser()->getIdentity();
         $id = $user->id;
-        $path = '\uploads\\'.$id.'\\'.$this->attach_file->baseName.'.'.$this->attach_file->extension;
-        $full_path_to_save = Yii::$app->basePath.'\web'.$path;
-        if (!is_dir(Yii::$app->basePath.'\web\uploads\\'.$id))
-            {
-                mkdir(Yii::$app->basePath.'\web\uploads\\'.$id,0777, true);
-            }
-        $this->task_file= $path;
-        $this->task_file_name = $this->attach_file->baseName.'.'.$this->attach_file->extension;
-        $this->task_file_size = $this->attach_file->size;
-        if ($this->task_file_size > 1024*1024)
-        {
-            $this->task_file_size = round($this->task_file_size/(1024*1024), 1).' мб';
+        $path = '\uploads\\' . $id . '\\' . $this->attach_file->baseName . '.' . $this->attach_file->extension;
+        $full_path_to_save = Yii::$app->basePath . '\web' . $path;
+        if (!is_dir(Yii::$app->basePath . '\web\uploads\\' . $id)) {
+            mkdir(Yii::$app->basePath . '\web\uploads\\' . $id, 0777, true);
         }
-        if ($this->task_file_size > 1024)
-        {
-            $this->task_file_size = round($this->task_file_size/1024,1).' кб';
+        $this->task_file = $path;
+        $this->task_file_name = $this->attach_file->baseName . '.' . $this->attach_file->extension;
+        $this->task_file_size = $this->attach_file->size;
+        if ($this->task_file_size > 1024 * 1024) {
+            $this->task_file_size = round($this->task_file_size / (1024 * 1024), 1) . ' мб';
+        }
+        if ($this->task_file_size > 1024) {
+            $this->task_file_size = round($this->task_file_size / 1024, 1) . ' кб';
         }
         $this->attach_file->saveAs($full_path_to_save);
-        $this->attach_file = NULL;
+        $this->attach_file = null;
     }
 //    public function beforeSave($insert)
 //    {
@@ -287,5 +283,4 @@ class Tasks extends \yii\db\ActiveRecord
 //
 //        return true;
 //    }
-
 }
